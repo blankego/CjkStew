@@ -1,0 +1,7 @@
+#!/bin/sh
+sqlite3 -separator ',' ~/data/expandedRimes.sqlite "select count() from finals; select grp,roundedness = '合',grade, rime, clicked, dienq,phuan,karlgren,hvang,lyx,zjew,pulleyblank from finals" > finals.csv
+sqlite3 -separator ',' ~/data/expandedRimes.sqlite "select count() from initials; select name, dienq, phuan,karlgren,hvang,lyx,zjew,pulleyblank from initials" > initials.csv
+sqlite3 -separator ',' ~/data/expandedRimes.sqlite "select count() from syllables; select meld, chars,nentries,init,fin,tone from syl" > syllables.csv
+sqlite3 -separator ',' ~/data/expandedRimes.sqlite "select count() from toc; select * from toc" > toc.csv
+sqlite3 -separator ',' ~/data/expandedRimes.sqlite "select count() from toc2rimes; select section - 1, final, tone from toc2rimes " > toc2rimes.csv
+

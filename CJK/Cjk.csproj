@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2FA46C31-6665-4D77-9E8F-871E7E043EFA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Cjk</RootNamespace>
+    <AssemblyName>CJK</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Phonetic\Enums.cs" />
+    <Compile Include="Phonetic\EInitial.cs" />
+    <Compile Include="Phonetic\ESyllable.cs" />
+    <Compile Include="Phonetic\EFinal.cs" />
+    <Compile Include="Phonetic\ESection.cs" />
+    <Compile Include="ArrayIndex.cs" />
+    <Compile Include="Phonetic\ER.cs" />
+    <Compile Include="Phonetic\ErData\ErDataTag.cs" />
+    <Compile Include="Phonetic\Rime19.cs" />
+    <Compile Include="Phonetic\Rime106.cs" />
+    <Compile Include="Phonetic\Entities.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Phonetic\" />
+    <Folder Include="PhoneticStructs\" />
+    <Folder Include="Phonetic\ErData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\salgo\salgo\salgo\salgo.csproj">
+      <Project>{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}</Project>
+      <Name>salgo</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Phonetic\ErData\finals" />
+    <EmbeddedResource Include="Phonetic\ErData\initials" />
+    <EmbeddedResource Include="Phonetic\ErData\syllables" />
+    <EmbeddedResource Include="Phonetic\ErData\toc" />
+    <EmbeddedResource Include="Phonetic\ErData\toc2rimes" />
+    <EmbeddedResource Include="Phonetic\ErData\rime19" />
+    <EmbeddedResource Include="Phonetic\ErData\rime106" />
+  </ItemGroup>
+</Project>

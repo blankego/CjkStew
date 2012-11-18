@@ -1,0 +1,8 @@
+#!/bin/sh
+cat finals.csv|deflate.exe  > finals
+cat initials.csv|deflate.exe  > initials
+cat syllables.csv| deflate.exe  > syllables
+cat toc.csv|deflate.exe  > toc
+cat toc2rimes.csv|deflate.exe   > toc2rimes
+cat rime106.csv|deflate.exe > rime106
+cat rime19.csv|deflate.exe > rime19
