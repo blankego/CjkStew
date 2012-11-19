@@ -41,8 +41,9 @@ namespace Cjk.Phonetic
 
 		public struct Range : IReadOnlyList<ESyllable>
 		{
-			readonly ushort Begin, End;			
-			internal Range(ushort begin, ushort end)
+			readonly ushort Begin, End;
+
+			internal Range (ushort begin, ushort end)
 			{
 				Begin = begin;
 				End = end;
@@ -55,19 +56,25 @@ namespace Cjk.Phonetic
 
 			public IEnumerator<ESyllable> GetEnumerator ()
 			{
-				for(int i = Begin; i != End; ++i)
+				for (int i = Begin; i != End; ++i)
 					yield return Get(_charIdx.GetValue(i));
 			}
 
-			public int Count { get { return End - Begin;} }
+			public int Count { get { return End - Begin; } }
 
-			public ESyllable this[int idx] { get { return Get(_charIdx.GetValue( Begin + idx));	} }
+			public ESyllable this [int idx] { get { return Get(_charIdx.GetValue(Begin + idx));	}
+			}
 			#endregion
 
 
 		}
-
-		static internal readonly ArrayIndex<CodePoint,ushort> _charIdx = new ArrayIndex<CodePoint, ushort>(20000);
+		//Make sure the syllables of same char are also in order
+		static internal readonly ArrayIndex<CodePoint,ushort> _charIdx = 
+			new ArrayIndex<CodePoint, ushort>(20000, (a,b) => {
+				int rel = a.Key.CompareTo(b.Key);
+				return rel == 0 ? a.Value.CompareTo(b.Value) : rel;
+			}
+			);
 		static internal readonly _Syl[] Table = TableImporter<_Syl>.Import(_Syl.SetAll);
 		static readonly string _allChars;
 
@@ -85,9 +92,9 @@ namespace Cjk.Phonetic
 			return new ESyllable{_i = (ushort)idx};
 		}
 
-
-
 		ushort _i;
+
+		public Meld Meld { get { return Table[_i].Meld; } }
 
 		public EInitial Initial { get { return EInitial.Get(Table[_i].Initial); } }
 
@@ -95,7 +102,7 @@ namespace Cjk.Phonetic
 
 		public Tone Tone { get { return Table[_i].Tone; } }
 
-		public ESection Section { get { return ESection.GetByRime(Table[_i].Final, Table[_i].Tone);} }
+		public ESection Section { get { return ESection.GetByRime(Table[_i].Final, Table[_i].Tone); } }
 
 //		public T GetRime<T>() where T : IRime
 //		{
@@ -103,23 +110,23 @@ namespace Cjk.Phonetic
 //		}
 
 		public UString HeadWos {
-			get{
+			get {
 				int start = Table[_i].CharsIdx,
-				 	end = _allChars.IndexOf('|',start);
+				end = _allChars.IndexOf('|', start);
 				return new UString(_allChars, start, end - start);
 			}
 		}
 
-		static public Range GetAll( CodePoint cp)
+		static public Range GetAllByChar (CodePoint cp)
 		{
 			int b, e;
 			_charIdx.EqualRange(cp, out b, out e);
 			return new Range((ushort)b, (ushort)e);
 		}
 
-		static public IEnumerable<ESyllable> All{
-			get{
-				for(int i = 0; i != Table.Length; ++i)
+		static public IEnumerable<ESyllable> All {
+			get {
+				for (int i = 0; i != Table.Length; ++i)
 					yield return Get(i);
 			}
 		}

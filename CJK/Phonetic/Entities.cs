@@ -66,6 +66,10 @@ namespace Cjk.Phonetic
 				Final = s.ToCodePoint(Inital.InBmp ? 1 : 2);
 			}
 		}
+		public override string ToString ()
+		{
+			return Inital == default(CodePoint) ? "[]" : string.Format("[{0},{1}]",Inital,Final);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]

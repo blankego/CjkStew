@@ -44,6 +44,8 @@ namespace Cjk.Phonetic
 			return Table[_i].Recons.Get(recons);
 		}
 
+		public bool Rounded { get { return Table[_i].Rounded; } }
+
 		public string  Name { get { return Table[_i].Name; } }
 
 		public char Group { get { return Table[_i].Group; } }

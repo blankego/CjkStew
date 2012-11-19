@@ -6,7 +6,7 @@ using Salgo;
 
 namespace Cjk.Phonetic
 {
-	public struct SectionLeague<T> where T: struct, IRime
+	public struct RimeLeague<T> where T: struct, IRime
 	{
 		internal T? _level, _rising, _going, _entering;
 
@@ -18,6 +18,13 @@ namespace Cjk.Phonetic
 
 		public T? Entering{ get { return _entering; } }
 
+		internal RimeLeague(T? level, T? rising, T? going, T? entering)
+		{
+			_level = level;
+			_rising = rising;
+			_going = going;
+			_entering = entering;
+		}
 	}
 
 	public interface IRime
@@ -32,21 +39,22 @@ namespace Cjk.Phonetic
 
 		IEnumerable<ESyllable> Syllables{ get; }
 
-		bool Contains(CodePoint cp);
+		bool Contains (CodePoint cp);
+
 	}
 
-	public struct ESection : IRime
+	public struct ESection : IRime,IEquatable<ESection>
 	{
 		[EntTable("toc"), StructLayout(LayoutKind.Sequential,Pack = 1)]
 		internal struct _Sect
 		{
-			internal byte Volume, oinal;
+			internal byte Volume, Ordinal;
 			internal char Name;
 
 			internal static void SetAll (ref _Sect st, int idx, IList<string> rec)
 			{
 				st.Volume = byte.Parse(rec[0].Substring(0, 1));
-				st.oinal = byte.Parse(rec[0].Substring(2, 2));
+				st.Ordinal = byte.Parse(rec[0].Substring(2, 2));
 				st.Name = rec[0][4];
 			}
 		}
@@ -123,15 +131,17 @@ namespace Cjk.Phonetic
 			return new ESection{_i = (byte)idx};
 		}
 
+		internal int Index { get { return _i; } }
+
 		public int Volume { get { return Table[_i].Volume; } }
 
-		public int Ordinal { get { return Table[_i].oinal; } }
+		public int Ordinal { get { return Table[_i].Ordinal; } }
 
 		public Tone Tone { get { return (Tone)(Volume == 1 ? 1 : Volume - 1); } }
 
 		public char Title { get { return Table[_i].Name; } }
 
-		public SectionLeague<ESection> League {
+		public RimeLeague<ESection> League {
 			get {
 				throw new NotImplementedException();
 			}
@@ -151,10 +161,18 @@ namespace Cjk.Phonetic
 			}
 		}
 
+		public Rime19? Rime19 {
+			get {
+				//TODO
+				throw new NotImplementedException();
+
+			}
+		}
+
 		public bool Contains (CodePoint cp)
 		{
 			bool test = false;
-			var r = ESyllable.GetAll(cp);
+			var r = ESyllable.GetAllByChar(cp);
 			int cnt = r.Count;
 			if (cnt > 0)			
 				for (int i = 0; i < cnt; i++)
@@ -163,7 +181,6 @@ namespace Cjk.Phonetic
 					{
 						test = true;
 						break;
-
 					}
 				}
 			return test;
@@ -184,7 +201,30 @@ namespace Cjk.Phonetic
 			return Get(idx);
 		}
 
+		static public IEnumerable<ESection> GetAllByChar (CodePoint cp)
+		{
+			var r =  ESyllable.GetAllByChar(cp);
+			ESection lastSect = new ESection{_i = 0xFF};
+			for (int i = 0; i < r.Count; ++i)
+			{
+				var syl = r[i];
+				var currSect = GetByRime(syl.Final.Index,syl.Tone);
+				if(!currSect.Equals(lastSect))
+				{
+					lastSect = currSect;
+					yield return currSect;
+				}
+			}
+		}
 
+		public bool Equals(ESection other)
+		{
+			return _i == other._i;
+		}
+		public override int GetHashCode ()
+		{
+			return _i;
+		}
 	}
 }
 

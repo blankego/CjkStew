@@ -5,7 +5,7 @@ using System.Linq;
 using Salgo;
 namespace Cjk.Phonetic
 {
-	public struct Rime19 : IRime
+	public struct Rime19 : IRime,IEquatable<Rime19>
 	{
 		[EntTable("rime19"), StructLayout(LayoutKind.Sequential,Pack = 1)]
 		internal struct _Sect
@@ -23,14 +23,42 @@ namespace Cjk.Phonetic
 						if(ESection.Table[i].Name == ch)
 							break;
 					_19ToEr.Add((byte)idx,(byte)i);
-					_erTo19[i] = (byte)idx;
+					_erTo19[i].Add((byte)idx);
+				
 				}
 
 			}
 		}
+
+		[StructLayoutAttribute(LayoutKind.Sequential,Pack = 1)]
+		internal struct Fork
+		{
+			byte _first, _sencond;
+			public byte  First{ get { return _first;} }
+			public byte Second{ get { return _sencond; } }
+			public int Count{ get { return First == Second ? 0 : Second == 0xFF ? 1 : 2; } }
+			public void Add(byte i)
+			{
+				switch (Count)
+				{
+				case 1:
+					_sencond = i;
+					break;
+				default://assume the first
+					_first = i;
+					_sencond = 0xFF;
+					break;				
+				}
+			}
+		}
+
 		static internal readonly ArrayIndex<byte,byte> _19ToEr = new ArrayIndex<byte, byte>();
-		static internal readonly byte[] _erTo19 = new byte[206];
+		static internal readonly Fork[] _erTo19 = new Fork[206];
 		static internal readonly _Sect[] Table = TableImporter<_Sect>.Import(_Sect.SetAll);
+		static internal readonly HashSet<CodePoint> _jias = new HashSet<CodePoint>(
+			"佳涯娃哇洼媧緺騧蝸蛙卦挂詿罣畫絓".IterCodePoints(0)
+		);
+
 		static Rime19()
 		{
 			_19ToEr.Prep();
@@ -56,9 +84,15 @@ namespace Cjk.Phonetic
 
 		public bool Contains(CodePoint cp)
 		{
-			throw new NotImplementedException();
+			return GetAllByChar(cp).Any(Equals);
 		}
-		public SectionLeague<Rime19> League {
+
+		internal Fork FromEr(ESection er)
+		{
+			return _erTo19[er.Index];
+		}
+
+		public RimeLeague<Rime19> League {
 			get {
 				throw new NotImplementedException();
 			}
@@ -69,6 +103,35 @@ namespace Cjk.Phonetic
 				return ESections.SelectMany(es=>es.Syllables);;
 			}
 			
+		}
+
+
+		static public IEnumerable<Rime19> GetAllByChar(CodePoint cp)
+		{
+			var range = ESyllable.GetAllByChar(cp);
+			Rime19 last = new Rime19{_i = 0xff};
+			for (int i = 0; i < range.Count; ++i)
+			{
+				var syl = range[i];
+				var er = ESection.GetByRime(syl.Final.Index,syl.Tone);
+				var fork = _erTo19[er.Index];
+				var curr = 	new Rime19{_i = (fork.First == 30 /*泰*/&& !syl.Final.Rounded) ? fork.Second : fork.First};
+
+				if(!curr.Equals(last))
+				{
+
+					yield return last = curr;
+					if(fork.Count == 2 && (er.Title == '佳' || er.Title == '卦') && _jias.Contains(cp))
+					{
+						yield return last = new Rime19{_i = fork.Second};
+					}
+				}
+			}
+		}
+
+		public bool Equals(Rime19 other)
+		{
+			return _i == other._i;
 		}
 	}
 }

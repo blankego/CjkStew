@@ -18,6 +18,8 @@ namespace Cjk
 			}
 		}
 
+		Comparison<KeyValuePair<K,V>> _sortComp;
+
 		KeyValuePair<K,V>[] _arr;
 
 		public int Length{ get; private set; }
@@ -36,9 +38,10 @@ namespace Cjk
 			Prep();
 		}
 
-		public ArrayIndex (int capacity = 12)
+		public ArrayIndex (int capacity = 12, Comparison<KeyValuePair<K,V>> sortComp = null)
 		{
 			Length = 0;
+			_sortComp = sortComp;
 			_arr = new KeyValuePair<K, V>[capacity];
 		}
 
@@ -71,7 +74,8 @@ namespace Cjk
 		public ArrayIndex<K,V> Prep ()
 		{
 			ShrinkToFit();
-			Array.Sort(_arr, (a,b) => a.Key.CompareTo(b.Key));
+			Comparison<KeyValuePair<K,V>> comp = _sortComp ?? ((a,b) => a.Key.CompareTo(b.Key));
+			Array.Sort(_arr, comp);
 			return this;
 		}
 		public int BinarySearch(K key)

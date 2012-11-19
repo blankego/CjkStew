@@ -6,32 +6,40 @@ using Salgo;
 
 namespace Cjk.Phonetic
 {
-	public struct Rime106 : IRime
+	public struct Rime106 : IRime, IEquatable<Rime106>
 	{
 		[EntTable("rime106"), StructLayout(LayoutKind.Sequential,Pack = 1)]
 		internal struct _Sect
 		{
-			internal byte Volume, oinal;
+			internal byte Volume, Ordinal;
 			internal char Name;
 
 			internal static void SetAll (ref _Sect st, int idx, IList<string> rec)
 			{
 				st.Volume = byte.Parse(rec[0].Substring(0, 1));
-				st.oinal = byte.Parse(rec[0].Substring(2, 2));
+				st.Ordinal = byte.Parse(rec[0].Substring(2, 2));
 				st.Name = rec[0][4];
 				foreach (var o in rec.Skip(1).Select(it=>byte.Parse(it)))
 				{
 					int i = 0;
 					for (; i != ESection.Table.Length; ++i)
-						if (ESection.Table[i].Volume == st.Volume && ESection.Table[i].oinal == o)
+						if (ESection.Table[i].Volume == st.Volume && ESection.Table[i].Ordinal == o)
 							break;
 					_106ToEr.Add((byte)idx, (byte)i);
 					_erTo106[i] = (byte)idx;
 				}
-
+				_titleDict[st.Name] = (byte)idx;
 			}
 		}
-		static internal readonly ArrayIndex<byte,byte> _106ToEr = new ArrayIndex<byte, byte>();
+
+		#region static fields
+		static internal readonly ArrayIndex<byte,byte> _106ToEr = 
+			new ArrayIndex<byte, byte>(206, (a,b) => {
+				var rel = a.Key.CompareTo(b.Key);
+				return rel == 0 ? a.Value.CompareTo(b.Value) : rel;
+			}
+			);
+		static internal readonly Dictionary<char,byte> _titleDict = new Dictionary<char, byte>(106);
 		static internal readonly byte[] _erTo106 = new byte[206];
 		static internal readonly _Sect[] Table = TableImporter<_Sect>.Import(_Sect.SetAll);
 
@@ -39,12 +47,35 @@ namespace Cjk.Phonetic
 		{
 			_106ToEr.Prep();
 		}
+		#endregion
 
 		byte _i;
 
 		static internal Rime106 Get (int idx)
 		{
 			return new Rime106{_i = (byte)idx};
+		}
+
+		static public Rime106 GetByTitle(char title)
+		{
+			byte idx;
+			if(!_titleDict.TryGetValue(title,out idx))
+				throw new ArgumentException(title.ToString() + " is not a valid rime name!");
+			return new Rime106{_i = idx};
+		}
+
+		static public IEnumerable<Rime106> GetAllByChar (CodePoint cp)
+		{
+			Rime106 last = new Rime106{_i = 0xFF};
+			foreach (var er in ESection.GetAllByChar(cp))
+			{
+				Rime106 curr = Get(_erTo106[er.Index]);
+				if (!curr.Equals(last))
+				{
+					last = curr;
+					yield return curr;
+				}
+			}
 		}
 
 		public IEnumerable<ESection> ESections {
@@ -58,7 +89,7 @@ namespace Cjk.Phonetic
 
 		public int Volume { get { return Table[_i].Volume; } }
 
-		public int Ordinal { get { return Table[_i].oinal; } }
+		public int Ordinal { get { return Table[_i].Ordinal; } }
 
 		public Tone Tone { get { return (Tone)(Volume == 1 ? 1 : Volume - 1); } }
 
@@ -66,7 +97,7 @@ namespace Cjk.Phonetic
 
 		public bool Contains (CodePoint cp)
 		{
-			throw new NotImplementedException();
+			return GetAllByChar(cp).Any(Equals);
 		}
 
 		public int AdjustedOrdinal {
@@ -91,12 +122,40 @@ namespace Cjk.Phonetic
 					break;
 				}
 				return ao;
-			}
+			}		
 		}
 
-		public SectionLeague<Rime106> League {
+		public Rime106? Peer (Tone tone)
+		{
+			int ao = AdjustedOrdinal;
+			int id;
+			switch (tone)
+			{
+			case Tone.Level:
+				id = ao < 9 ? ao : ao > 9 ? ao - 1 : 0;
+				break;
+			case Tone.Rising:
+				id = ao < 9 ? ao + 30 : 9 < ao && ao < 26 ? ao + 29 : ao > 26 ? ao + 28 : 0;
+				break;
+			case Tone.Going:
+				id = ao < 26 ? ao + 59 : ao > 26 ? ao + 58 : 0;
+				break;
+			default:
+				id = ao < 4 ? ao + 89 :
+					     11 < ao && ao < 18 ? ao + 81 : 22 < ao && ao < 27 ? ao + 76 : ao > 27 ? ao + 75 : 0;
+				break;
+			}
+			if (id == 0)
+				return null;
+			else
+				return new Rime106{_i = (byte)(id - 1)};
+		}
+
+		public RimeLeague<Rime106> League {
 			get {
-				throw new NotImplementedException();
+				return new RimeLeague<Rime106>(
+					Peer(Tone.Level), Peer(Tone.Rising), Peer(Tone.Going), Peer(Tone.Entering)
+				);
 			}
 		}
 
@@ -107,6 +166,15 @@ namespace Cjk.Phonetic
 			
 		}
 
+		public bool Equals (Rime106 other)
+		{
+			return _i == other._i;
+		}
+
+		public override int GetHashCode ()
+		{
+			return _i;
+		}
 	}
 
 
