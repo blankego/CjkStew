@@ -46,4 +46,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DictUtil\DictUtil.csproj">
+      <Project>{51A5E160-FAD1-4B32-80D1-668FCBFC5A70}</Project>
+      <Name>DictUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

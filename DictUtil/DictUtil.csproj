@@ -8,7 +8,7 @@
     <ProjectGuid>{51A5E160-FAD1-4B32-80D1-668FCBFC5A70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DictUtil</RootNamespace>
-    <AssemblyName>DictTypes</AssemblyName>
+    <AssemblyName>DictUtil</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,14 +32,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="DictZip.cs" />
     <Compile Include="GZip.cs" />
-    <Compile Include="StarDict.cs" />
     <Compile Include="DictDB.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="DictIdxTable.cs" />
+    <Compile Include="HeteroIdxTable.cs" />
+    <Compile Include="StarDict\StarDictIdx.cs" />
+    <Compile Include="StarDict\StarDictInfo.cs" />
+    <Compile Include="StarDict\StarDict.cs" />
+    <Compile Include="DictUtilExt.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\salgo\salgo\salgo\salgo.csproj">
+      <Project>{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}</Project>
+      <Name>salgo</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StarDict\" />
+  </ItemGroup>
 </Project>

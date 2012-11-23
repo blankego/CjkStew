@@ -3,7 +3,7 @@ using System.IO.Compression;
 using System.IO;
 using System.Text;
 
-namespace DictTypes
+namespace DictUtil
 {
 	public class DzExtraField : GzExtraField
 	{
@@ -50,12 +50,8 @@ namespace DictTypes
 
 		public int ChunkLength { get { return ExtraField.ChunkLength; } }
 
-		public DictZip (string path) : this(path, Encoding.UTF8)
-		{
 
-		}
-
-		public DictZip (string path, Encoding enc) : base (path)
+		public DictZip (string path, Encoding enc = null) : base (path)
 		{
 			_enc = enc ?? Encoding.UTF8;
 		}
@@ -96,7 +92,10 @@ namespace DictTypes
 			return res;
 		}
 
-
+		public byte[] GetBytes(long pos, int cnt)
+		{
+			return ReadAt((int)pos, cnt);
+		}
 
 		public string GetEntry (long pos, int cnt)
 		{

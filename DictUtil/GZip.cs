@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Collections.Generic;
 
-namespace DictTypes
+namespace DictUtil
 {
 	public enum GzOS : byte
 	{

@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using DictTypes;
+using DictUtil;
 using System.IO;
 
 namespace DictTypesTest
@@ -13,28 +13,57 @@ namespace DictTypesTest
 		{
 			byte[] content = File.ReadAllBytes("lorem_ipsum.txt");
 			var gz = new GZip("lorem_ipsum.txt.gz");
-			Assert.AreEqual(2838,gz.OriginalSize);
-			Assert.AreEqual(1276,gz.CompressedFileSize);
-			Assert.AreEqual("56.24 %",gz.Ratio);
-			Assert.AreEqual(CompressionLevel.Fastest,gz.CompressionLevel);
+			Assert.AreEqual(2838, gz.OriginalSize);
+			Assert.AreEqual(1276, gz.CompressedFileSize);
+			Assert.AreEqual("56.24 %", gz.Ratio);
+			Assert.AreEqual(CompressionLevel.Fastest, gz.CompressionLevel);
 			Assert.AreEqual(26, gz.HeaderSize);
 			Assert.False(gz.HasHeaderCRC);
 			Assert.True(gz.HasName);
-			Assert.AreEqual("lorem_ipsum.txt",gz.Name);
+			Assert.AreEqual("lorem_ipsum.txt", gz.Name);
 			CollectionAssert.AreEqual(content, gz.ReadAllBytes());
 		}
 
 		[Test]
-		public void TestDzip()
+		public void TestDzip ()
 		{
 			var dz = new DictZip("sm_entry.csv.dz");
 			Assert.AreEqual(81, dz.ChunkCount);
-			Assert.AreEqual(58315,dz.ChunkLength);
+			Assert.AreEqual(58315, dz.ChunkLength);
 //			byte[] content = File.ReadAllBytes("sm_entry.csv");
 //			CollectionAssert.AreEqual(content, dz.ReadAllBytes());
 			string s = "540,500,文一  重一,,,\n";
 			Assert.AreEqual(s, dz.GetEntry((int)dz.OriginalSize - 26, 26));
 			Assert.AreEqual(s, dz.GetEntry((int)dz.OriginalSize - 26, 26));
+		}
+
+		[Test]
+		public void TestEndiannessConversion ()
+		{
+			byte[] arr = {0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
+			Assert.AreEqual(0x0123456789abcdefUL, arr.GetLongBigEndian());
+			Assert.AreEqual(0xefcdab8967452301UL, arr.GetLongLittleEndian());
+			Assert.AreEqual(0x89abcdefU, arr.GetIntBigEndian(4));
+			Assert.AreEqual(0x8967,arr.GetIntLittleEndian(3,2));
+		}
+
+		[Test]
+		public void TestStarDictInfo()
+		{
+			var info = new StarDictInfo(Path.GetFullPath( @"data/jargon.ifo"));
+			Assert.AreEqual("jargon.ifo",Path.GetFileName(info.FileName));
+			Assert.AreEqual(4,info.PointerSize);
+			Assert.AreEqual("jargon",Path.GetFileName(info.BaseName));
+			Assert.AreEqual('m',info.TypeMark);
+			Console.WriteLine(info.BaseName);
+		}
+
+		[Test]
+		public void TestStarDictIdx()
+		{
+			var info = new StarDictInfo("data/jargon.ifo");
+			var idx = new StarDictIdx(info);
+
 		}
 	}
 }

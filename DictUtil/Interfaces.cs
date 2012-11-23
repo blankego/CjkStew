@@ -1,6 +1,6 @@
 using System;
-
-namespace DictTypes
+using System.Collections.Generic;
+namespace DictUtil
 {
 	public interface IDictDB
 	{
@@ -18,24 +18,26 @@ namespace DictTypes
 		/// Length.
 		/// </param>
 		string GetEntry (long offset, int length);
+
+		byte[] GetBytes (long offset, int length);
 	}
 
-	/// <summary>
-	/// Unifies various address pairs in this from. No matter what magnitude of number you choose
-	/// to use for your address pair, as long as it complies with these two properties' signature 
-	/// it will be suitable to the whole API
-	/// </summary>
 	public interface IDictAddress
 	{
-		long Offset{get;set;}
-		int Length{get;set;}
+		long Offset { get;}
+		int Length { get;}
 	}
+
+
+
+
 
 	public interface IDictIDX
 	{
 		// use constraint to avoid boxing of value types
-		bool GetIndex<A>(int ordinal, ref A address) where A : IDictAddress;
-		bool GetIndex<A>(string headword, ref A address) where A : IDictAddress;
+		bool GetAddress (int ordinal, out long offset, out int length);
+
+		bool GetIndexRange(string headword, out int begin, out int end);
 	}
 }
 
