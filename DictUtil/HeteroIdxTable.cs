@@ -78,7 +78,7 @@ namespace DictUtil
 		}
 
 		public StrHeteroIdxTable (string gzName, Func<HeteroIdxTable,int> entryRuler) 
-			: this(new GZip(gzName).ReadAllBytes(), entryRuler){}
+			: this(GZip.OpenRead(gzName).ReadAllBytes(), entryRuler){}
 
 
 		#region implemented abstract members of DictUtil.HeteroIdxTable

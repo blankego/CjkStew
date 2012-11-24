@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{467EEE7F-C290-415C-AF71-4CC3175AE370}</ProjectGuid>
+    <ProjectGuid>{6312B205-161A-46C9-998F-DC95B0BEEFD3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>CjkTest</RootNamespace>
-    <AssemblyName>CjkTest</AssemblyName>
+    <RootNamespace>Cjk.Phonetic</RootNamespace>
+    <AssemblyName>CPhonetic</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -27,23 +28,35 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestPhonetic.cs" />
-    <Compile Include="TestArrayIndex.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TokenDict.cs" />
+    <Compile Include="MSyl.cs" />
+    <Compile Include="Transliterators\IMTransliterator.cs" />
+    <Compile Include="Transliterators\Bopomofo.cs" />
+    <Compile Include="MPhonemeCombinations\MImt.cs" />
+    <Compile Include="MPhonemeCombinations\MRt.cs" />
+    <Compile Include="Transliterators\AltPinyin.cs" />
+    <Compile Include="Transliterators\Pinyin.cs" />
+    <Compile Include="Utils\SAlgo.cs" />
+    <Compile Include="Transliterators\GwoRo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\CJK\Cjk.csproj">
-      <Project>{2FA46C31-6665-4D77-9E8F-871E7E043EFA}</Project>
-      <Name>Cjk</Name>
+    <Folder Include="Transliterators\" />
+    <Folder Include="MPhonemeCombinations\" />
+    <Folder Include="Utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\salgo\salgo\salgo.csproj">
+      <Project>{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}</Project>
+      <Name>salgo</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

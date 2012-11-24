@@ -21,7 +21,7 @@ namespace DictUtil
 			_enc = enc ?? Encoding.UTF8;
 			_info = info;
 			_idx = idx;
-			_db = fname.EndsWith("dz") ? (IDictDB)new DictZip(fname) : (IDictDB)new TxtDictDB(fname);
+			_db = fname.EndsWith("dz") ? (IDictDB)DictZip.OpenRead(fname) : (IDictDB)new TxtDictDB(fname);
 		}	
 
 		public string[] Search (string headword)

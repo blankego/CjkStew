@@ -55,12 +55,6 @@
     <Folder Include="Phonetic\ErData\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\salgo\salgo\salgo\salgo.csproj">
-      <Project>{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}</Project>
-      <Name>salgo</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Phonetic\ErData\finals" />
     <EmbeddedResource Include="Phonetic\ErData\initials" />
     <EmbeddedResource Include="Phonetic\ErData\syllables" />

@@ -3,17 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cjk", "Cjk.csproj", "{2FA46C31-6665-4D77-9E8F-871E7E043EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo", "..\..\salgo\salgo\salgo\salgo.csproj", "{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "..\..\test\test.csproj", "{216A250F-B10E-4F36-96C7-B647FD281ED7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo_test", "..\..\salgo\salgo\salgo_test\salgo_test.csproj", "{55F26C3D-6166-4218-B509-600826E06154}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CjkTest", "..\CjkTest\CjkTest\CjkTest.csproj", "{467EEE7F-C290-415C-AF71-4CC3175AE370}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictUtil", "..\DictUtil\DictUtil.csproj", "{51A5E160-FAD1-4B32-80D1-668FCBFC5A70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictUtilTest", "..\DictUtilTest\DictUtilTest.csproj", "{0228CAAF-4B80-490B-9DA1-6F6F91F93CCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo", "..\salgo\salgo\salgo.csproj", "{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo_test", "..\salgo\salgo_test\salgo_test.csproj", "{55F26C3D-6166-4218-B509-600826E06154}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTransliteration", "..\CTransliteration\CTransliteration\CTransliteration.csproj", "{6312B205-161A-46C9-998F-DC95B0BEEFD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CTransliterationTest", "..\CTransliteration\CTransliterationTest\CTransliterationTest.csproj", "{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +35,14 @@ Global
 		{0228CAAF-4B80-490B-9DA1-6F6F91F93CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0228CAAF-4B80-490B-9DA1-6F6F91F93CCC}.Release|x86.ActiveCfg = Release|Any CPU
 		{0228CAAF-4B80-490B-9DA1-6F6F91F93CCC}.Release|x86.Build.0 = Release|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Debug|x86.Build.0 = Debug|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}.Release|x86.Build.0 = Release|Any CPU
 		{216A250F-B10E-4F36-96C7-B647FD281ED7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{216A250F-B10E-4F36-96C7-B647FD281ED7}.Debug|Any CPU.Build.0 = Debug|x86
 		{216A250F-B10E-4F36-96C7-B647FD281ED7}.Debug|x86.ActiveCfg = Debug|x86
@@ -61,8 +73,12 @@ Global
 		{51A5E160-FAD1-4B32-80D1-668FCBFC5A70}.Release|x86.Build.0 = Release|Any CPU
 		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|x86.Build.0 = Debug|Any CPU
 		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|x86.ActiveCfg = Release|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|x86.Build.0 = Release|Any CPU
 		{55F26C3D-6166-4218-B509-600826E06154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{55F26C3D-6166-4218-B509-600826E06154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55F26C3D-6166-4218-B509-600826E06154}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -71,6 +87,14 @@ Global
 		{55F26C3D-6166-4218-B509-600826E06154}.Release|Any CPU.Build.0 = Release|Any CPU
 		{55F26C3D-6166-4218-B509-600826E06154}.Release|x86.ActiveCfg = Release|Any CPU
 		{55F26C3D-6166-4218-B509-600826E06154}.Release|x86.Build.0 = Release|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Debug|x86.Build.0 = Debug|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Release|x86.ActiveCfg = Release|Any CPU
+		{6312B205-161A-46C9-998F-DC95B0BEEFD3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Cjk.csproj

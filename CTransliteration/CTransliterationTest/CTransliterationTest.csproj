@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{467EEE7F-C290-415C-AF71-4CC3175AE370}</ProjectGuid>
+    <ProjectGuid>{0BE201EA-58B1-43ED-85EE-CB5CEAD57D10}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>CjkTest</RootNamespace>
-    <AssemblyName>CjkTest</AssemblyName>
+    <RootNamespace>CPhoneticTest</RootNamespace>
+    <AssemblyName>CPhoneticTest</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,14 +36,21 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestPhonetic.cs" />
-    <Compile Include="TestArrayIndex.cs" />
+    <Compile Include="Test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\CJK\Cjk.csproj">
-      <Project>{2FA46C31-6665-4D77-9E8F-871E7E043EFA}</Project>
-      <Name>Cjk</Name>
+    <ProjectReference Include="..\CTransliteration\CTransliteration.csproj">
+      <Project>{6312B205-161A-46C9-998F-DC95B0BEEFD3}</Project>
+      <Name>CTransliteration</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="all_syllables.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bpmf_gworo.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

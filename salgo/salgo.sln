@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo", "salgo\salgo.csproj", "{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "salgo_test", "salgo_test\salgo_test.csproj", "{55F26C3D-6166-4218-B509-600826E06154}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "..\..\..\..\Projects\Playground\Playground\Playground.csproj", "{0B23446F-7E14-4611-A254-A7A2C2D9DE82}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Debug|Any CPU.Build.0 = Debug|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Debug|x86.ActiveCfg = Debug|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Debug|x86.Build.0 = Debug|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Release|Any CPU.ActiveCfg = Release|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Release|Any CPU.Build.0 = Release|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Release|x86.ActiveCfg = Release|x86
+		{0B23446F-7E14-4611-A254-A7A2C2D9DE82}.Release|x86.Build.0 = Release|x86
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F26C3D-6166-4218-B509-600826E06154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F26C3D-6166-4218-B509-600826E06154}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F26C3D-6166-4218-B509-600826E06154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F26C3D-6166-4218-B509-600826E06154}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = ..\..\..\..\Projects\Playground\Playground\Playground.csproj
+	EndGlobalSection
+EndGlobal

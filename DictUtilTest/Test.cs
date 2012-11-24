@@ -12,7 +12,7 @@ namespace DictTypesTest
 		public void TestGzip ()
 		{
 			byte[] content = File.ReadAllBytes("lorem_ipsum.txt");
-			var gz = new GZip("lorem_ipsum.txt.gz");
+			var gz = GZip.OpenRead("lorem_ipsum.txt.gz");
 			Assert.AreEqual(2838, gz.OriginalSize);
 			Assert.AreEqual(1276, gz.CompressedFileSize);
 			Assert.AreEqual("56.24 %", gz.Ratio);
@@ -22,12 +22,29 @@ namespace DictTypesTest
 			Assert.True(gz.HasName);
 			Assert.AreEqual("lorem_ipsum.txt", gz.Name);
 			CollectionAssert.AreEqual(content, gz.ReadAllBytes());
+			string path = "new_lorem.gz";
+			using(gz = GZip.Create(path,true))
+			{
+				gz.Name = "new_lorem";
+				gz.Comment = "test";
+				gz.Write(content,0,content.Length - 10);
+				gz.Write(content,content.Length - 10, 10);
+			}
+			using(var gz1 = GZip.OpenRead(path))
+			{
+				byte[] gzContent = gz1.ReadAllBytes();
+				Assert.AreEqual("new_lorem",gz1.Name);
+				Assert.AreEqual("test",gz.Comment);
+				Assert.AreEqual(content.Length,gz1.OriginalSize);
+				Assert.AreEqual(Crc32.UpdateCrc(content,0,content.Length),gz1.Crc);
+				CollectionAssert.AreEqual(content,gzContent);
+			}
 		}
 
 		[Test]
 		public void TestDzip ()
 		{
-			var dz = new DictZip("sm_entry.csv.dz");
+			var dz = DictZip.OpenRead("sm_entry.csv.dz");
 			Assert.AreEqual(81, dz.ChunkCount);
 			Assert.AreEqual(58315, dz.ChunkLength);
 //			byte[] content = File.ReadAllBytes("sm_entry.csv");
@@ -64,6 +81,19 @@ namespace DictTypesTest
 			var info = new StarDictInfo("data/jargon.ifo");
 			var idx = new StarDictIdx(info);
 
+		}
+
+		[Test]
+		public void TestCrc32()
+		{
+			using(var fs = File.OpenRead("lorem_ipsum.txt"))
+			{
+				byte[] bs = File.ReadAllBytes("lorem_ipsum.txt");
+				Assert.AreEqual(0x6029fcc0U,Crc32.Compute(bs));
+				fs.Position = 0;
+				Assert.AreEqual(0x6029fcc0U,Crc32.Compute(fs));
+				Assert.AreEqual(fs.Position, fs.Length);
+			}
 		}
 	}
 }

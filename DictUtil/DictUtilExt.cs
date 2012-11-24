@@ -5,25 +5,34 @@ namespace DictUtil
 {
 	public static class DictUtilExt
 	{
-		static public ulong GetUlongBigEndian (this Stream s)
+		static public ulong GetUlongBigEndian (this Stream s, int size = 8)
 		{
-
-			return 	(ulong)s.ReadByte() << 56 |
-				(ulong)s.ReadByte() << 48 |
-				(ulong)s.ReadByte() << 40 |
-				(ulong)s.ReadByte() << 32 |
-				(ulong)s.ReadByte() << 24 |
-				(ulong)s.ReadByte() << 16 |
-				(ulong)s.ReadByte() << 8 |
-				(byte)s.ReadByte();		
+			ulong res = 0;
+			for(;size-- > 0; res |= (ulong)s.ReadByte() << (size * 8));
+			return res;
 		}
 
-		static public uint GetUintBigEndian (this Stream s)
+		static public uint GetIntBigEndian (this Stream s, int size = 4)
 		{
-			return (uint)s.ReadByte() << 24 |
-				(uint)s.ReadByte() << 16 |
-				(uint)s.ReadByte() << 8 |
-				(uint)s.ReadByte();
+			uint res = 0;
+			for(;size-- > 0; res |= (uint)s.ReadByte() << (size * 8));
+			return res;
+		}
+
+		static public uint GetIntLittleEndian (this Stream s, int size = 4)
+		{
+			uint res = 0;
+			for(int i = 0; i < size; ++i)
+				res |= (uint)s.ReadByte() << (i * 8);
+			return res;
+		}
+
+		static public void SetIntLittleEndian (this Stream s, uint num, int size = 4)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				s.WriteByte((byte)(num >> i * 8));
+			}
 		}
 		 
 		static public ulong GetLongBigEndian (this byte[] arr, int idx = 0, int size = 8)
