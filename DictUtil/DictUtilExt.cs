@@ -34,6 +34,12 @@ namespace DictUtil
 				s.WriteByte((byte)(num >> i * 8));
 			}
 		}
+
+		static public void SetShortLittleEndian(this Stream s, ushort num)
+		{
+			s.WriteByte((byte)num);
+			s.WriteByte((byte)(num >> 8));
+		}
 		 
 		static public ulong GetLongBigEndian (this byte[] arr, int idx = 0, int size = 8)
 		{

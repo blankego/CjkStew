@@ -42,13 +42,15 @@ namespace DictUtil
 	}
 #endif
 
-
+	//writing is not supported by this class
 	public class GzExtraField
 	{
-		int _len;
-		byte[] _id = new byte[2];
+		protected readonly byte[] _id = new byte[2];
 		protected FileStream _fs;
-		internal FileStream FileStream{ get{ return _fs;} set{ _fs = value; } }
+
+		internal FileStream FileStream{ get { return _fs; } set { _fs = value; } }
+
+		internal bool IsCreating { get; set; }
 
 		public int TotalLength { get { return XLength + 2; } }
 
@@ -56,33 +58,36 @@ namespace DictUtil
 		/// Gets the length of the whole extra field minus 2
 		/// This value is redundant, will be computed from the Length field
 		/// </summary>
-		internal int XLength{ get { return _len + 4; } } 
+		public int XLength{ get { return Length + 4; } }
 
-		internal int Length { get { return _len; } }
+		public int Length { get; protected set; }
 
-		internal int FieldDataBegin { get { return 10 + 6; } }
+		public virtual byte[] Data {
+			get {
+				if (IsCreating)
+					return null;
+				byte[] buf = new byte[Length];
+				_fs.Position = FieldDataBegin;
+				_fs.Read(buf, 0, Length);
+				return buf;
+			}
+		}
+
+		public virtual int FieldDataBegin { get { return 10 + 6; } }
 
 		internal byte[] Id { get { return _id; } }
 
-		internal virtual void ReadFrom ()
+		internal virtual void Read ()
 		{	
 			FileStream fs = FileStream;
 			//Because the xlen field if redundant its value will be discarded
 			fs.GetIntLittleEndian(2);
 			_id[0] = (byte)fs.ReadByte();
 			_id[1] = (byte)fs.ReadByte();
-			_len = (int)fs.GetIntLittleEndian(2);
+			Length = (int)fs.GetIntLittleEndian(2);
 			fs.Position = TotalLength + 10;
 		}
 
-		internal virtual void WriteTo ()
-		{
-			Stream fs = FileStream;
-			//xfield header
-			fs.SetIntLittleEndian((uint)XLength, 2);
-			fs.Write(_id, 0, 2);
-			fs.SetIntLittleEndian((uint)Length, 2);
-		}
 	}
 
 	abstract public class GZipBase<T> : IDisposable where T : GzExtraField , new()
@@ -105,22 +110,21 @@ namespace DictUtil
 		#region fields
 		public readonly FileMode OpenMode;
 		public readonly FileStream FileStream;
-
-		public DeflateStream DeflateStream { get; protected set; }
-
 		byte _flag;
 		DateTime _mtime;
 		byte _xflag;
 		GzOS _os;
-		byte[] _name;
-		byte[] _comment;
+		protected byte[] _name;
+		protected byte[] _comment;
 		int _hcrc;
 		protected long _dataBegin;
 		uint _crc = 0;
-		uint _origSize;
+		uint _origSize = 0;
 		#endregion
 
 		#region props
+		//May be changed by subclasses
+		public DeflateStream DeflateStream { get; protected set; }
 
 		public bool IsCreating { get { return OpenMode == FileMode.Create; } }
 
@@ -144,7 +148,15 @@ namespace DictUtil
 
 		public long CompressedDataSize { get { return FileStream.Length - 8 - _dataBegin; } }
 
-		public T ExtraField { get; protected set; }
+		T _xfield;
+
+		public T ExtraField {
+			get{ return _xfield;} 
+			protected set {
+				_flag |= MEXTRA;
+				_xfield = value;
+			} 
+		}
 
 		/// <summary>
 		/// Gets or sets the name.
@@ -229,32 +241,44 @@ namespace DictUtil
 
 				ReadHeader();
 				//subclass may change this prop, therefore, leave it open
-				DeflateStream = new DeflateStream(FileStream, CompressionMode.Decompress,true);
+				DeflateStream = new DeflateStream(FileStream, CompressionMode.Decompress, true);
 			}
 			else if (openMode == FileMode.Create)
 			{
 				FileStream = File.Create(path);
-				DeflateStream = new DeflateStream(FileStream, CompressionMode.Compress,true);
+				//move the following line to subclasses give them more flexibility
+//				DeflateStream = new DeflateStream(FileStream, CompressionMode.Compress,true);
 			}
 		}
 
-		~GZipBase()
+		~GZipBase ()
 		{
 			Dispose();
 		}
 		#endregion
 
 		#region private helper functions
-		protected void EnsureReadMode()
+		protected void EnsureReadMode ()
 		{
-			if(IsCreating)
+			if (IsCreating)
 				throw new InvalidOperationException("This gzip is in creating mode, read operations are not allowed!");
 		}
 
-		protected void EnsureWriteMode()
+		protected void EnsureWriteMode ()
 		{
-			if(!IsCreating)
+			if (!IsCreating)
 				throw new InvalidOperationException("This gzip is in reading mode, write operations are not allowed!");
+		}
+
+		protected virtual void EnsureHeaderWritten ()
+		{
+			EnsureWriteMode();
+			if (!IsHeaderWritten)
+			{
+				WriteHeader();
+				WriteNameComment();
+				IsHeaderWritten = true;
+			}
 		}
 
 		byte[] ReadString ()
@@ -353,7 +377,15 @@ namespace DictUtil
 		protected virtual void ReadExtraField ()
 		{
 			ExtraField = new T(){FileStream = FileStream};
-			ExtraField.ReadFrom();
+			ExtraField.Read();
+		}
+
+		void UpdateFlag ()
+		{
+			var pos = FileStream.Position;
+			FileStream.Position = 3;
+			FileStream.WriteByte(_flag);
+			FileStream.Position = pos;
 		}
 
 		protected virtual void WriteHeader ()
@@ -386,29 +418,21 @@ namespace DictUtil
 		
 		}
 
-		protected virtual void WriteHeaderExtraPart ()
+		protected virtual void WriteNameComment ()
 		{
-			if (HasExtraField)
-				ExtraField.WriteTo();
-			if (HasName)
-				FileStream.Write(_name, 0, _name.Length);
-			if (HasComment)
-				FileStream.Write(_comment, 0, _comment.Length);
-			IsHeaderWritten = true;
-			_origSize = 0;
-		}
-
-		protected virtual void EnsureHeaderWritten ()
-		{
-			EnsureWriteMode();
-			if (!IsHeaderWritten)
+//			if (HasExtraField) //not supported
+//				ExtraField.Write();
+			if (HasName || HasComment)
 			{
-				WriteHeader();
-				WriteHeaderExtraPart();
+				if (HasName)
+					FileStream.Write(_name, 0, _name.Length);
+				if (HasComment)
+					FileStream.Write(_comment, 0, _comment.Length);
+				UpdateFlag();
 			}
 		}
 
-		void WriteFooter ()
+		protected void WriteFooter ()
 		{
 			FileStream.Position = 4;
 			WriteUnixTime();
@@ -427,7 +451,7 @@ namespace DictUtil
 			return bytesRead;
 		}
 
-		public int Read(byte[] buf, int offset, int count)
+		public int Read (byte[] buf, int offset, int count)
 		{
 			EnsureReadMode();
 			return ReadTo(buf, offset, count);
@@ -445,6 +469,17 @@ namespace DictUtil
 			return buf;
 		}
 
+		public virtual void CopyTo (Stream s)
+		{
+			EnsureReadMode();
+			byte[] buf = new byte[BUFSIZE];
+			for (int bytesRead = BUFSIZE; bytesRead == BUFSIZE;)
+			{
+				bytesRead = ReadTo(buf, 0, BUFSIZE);
+				s.Write(buf, 0, bytesRead);
+			}
+		}
+
 		protected virtual void WriteTo (byte[] buf, int offset, int cnt)
 		{
 			_crc = Crc32.UpdateCrc(buf, offset, cnt, _crc);
@@ -452,7 +487,7 @@ namespace DictUtil
 			_origSize += (uint)cnt;
 		}
 
-		public void Write(byte[] buf, int offset, int cnt)
+		public void Write (byte[] buf, int offset, int cnt)
 		{
 			EnsureHeaderWritten();
 			WriteTo(buf, offset, cnt);
@@ -462,9 +497,9 @@ namespace DictUtil
 		{
 			EnsureHeaderWritten();
 			byte[] buf = new byte[BUFSIZE];
-			for (int bytesRead = 0, chunkSize = 0; chunkSize > 0; bytesRead = 0)
+			for (int bytesRead, chunkSize = 1; chunkSize > 0;)
 			{
-				for (; bytesRead < BUFSIZE && chunkSize > 0;)
+				for (bytesRead = 0; bytesRead < BUFSIZE && chunkSize > 0;)
 					bytesRead += chunkSize = s.Read(buf, 0, BUFSIZE);
 				WriteTo(buf, 0, bytesRead);
 			}
@@ -478,19 +513,19 @@ namespace DictUtil
 			if (IsCreating && FileStream != null)
 			{
 				EnsureHeaderWritten();
-				if(DeflateStream != null)DeflateStream.Dispose();
+				if (DeflateStream != null)
+					DeflateStream.Dispose();
 				WriteFooter();
 			}
 			else
 			{
-				if(DeflateStream != null)DeflateStream.Dispose();
+				if (DeflateStream != null)
+					DeflateStream.Dispose();
 			}	
-			if(FileStream != null)
+			if (FileStream != null)
 				FileStream.Dispose();
 		}
 		#endregion
-
-
 
 	}
 
@@ -500,9 +535,11 @@ namespace DictUtil
 
 		static public GZip Create (string path, bool overwriteIfExists = false)
 		{
-			if(!overwriteIfExists && File.Exists(path))
-				throw new IOException("File "+path+" already exists");
-			return new GZip(path, FileMode.Create);
+			if (!overwriteIfExists && File.Exists(path))
+				throw new IOException("File " + path + " already exists");
+			var gz = new GZip(path, FileMode.Create);
+			gz.DeflateStream = new DeflateStream(gz.FileStream, CompressionMode.Compress, true);
+			return gz;
 		}
 
 		static public GZip OpenRead (string path)

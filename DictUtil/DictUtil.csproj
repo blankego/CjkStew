@@ -53,4 +53,10 @@
     <Folder Include="StarDict\" />
     <Folder Include="GZip\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\salgo\salgo\salgo.csproj">
+      <Project>{5514F9A6-0E73-42FC-A7F1-F8D540E825AB}</Project>
+      <Name>salgo</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
